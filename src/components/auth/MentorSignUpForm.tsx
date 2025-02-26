@@ -4,8 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, useForm } from "react-hook-form";
 import { z } from "zod";
 import { MENTOR_SIGNUP, mentorFormSchema } from "@/constants";
-import FieldForm from "../common/FieldForm";
-import { Button } from "../ui/button";
+import FieldForm from "@/components/common/FieldForm";
+import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -25,7 +25,7 @@ function MentorSignUpForm() {
   };
 
   const onClick = () => {
-    link.push("/mentor/data/waiting");
+    link.push("/questionnare/waiting");
   };
 
   return (

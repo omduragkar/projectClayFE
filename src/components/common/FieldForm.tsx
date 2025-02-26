@@ -1,8 +1,16 @@
 import React, { useState } from "react";
-import FieldMapper from "./FieldMapper";
-import { Button } from "../ui/button";
+import FieldMapper from "@/components/common/FieldMapper";
+import { Button } from "@/components/ui/button";
 
-function FieldForm({ fieldName, field, register }) {
+function FieldForm({
+  fieldName,
+  field,
+  register,
+}: {
+  fieldName: string;
+  field: any;
+  register: any;
+}) {
   const [formArray, setFormArray] = useState([]);
   return (
     <div className="space-y-2 p-2" key={fieldName}>

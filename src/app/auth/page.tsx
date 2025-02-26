@@ -20,7 +20,7 @@ export default function AuthPage() {
       //redirect to mentor dashboard
       link.push("/user/data");
     } else {
-      link.push("/mentor/data");
+      link.push("/questionnare");
     }
   };
 
@@ -38,7 +38,9 @@ export default function AuthPage() {
             <p className="text-center text-black text-lg font-semibold">
               to Start
             </p>
-            <p className="text-center text-yellow-400 text-lg font-semibold">your Journey</p>
+            <p className="text-center text-yellow-400 text-lg font-semibold">
+              your Journey
+            </p>
           </div>
           <p className="text-center text-gray-500 text-xs">
             By continuing, you agree to our Terms of Service and Privacy Policy
@@ -64,7 +66,11 @@ export default function AuthPage() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <Card className="w-full max-w-md p-6 shadow-lg bg-white">
-        <div className={`flex items-center gap-2 ${journeyIndex == 0 ? "justify-center" : "justify-start"}`}>
+        <div
+          className={`flex items-center gap-2 ${
+            journeyIndex == 0 ? "justify-center" : "justify-start"
+          }`}
+        >
           {journeyIndex != 0 && (
             <button
               onClick={() => setJourneyIndex(journeyIndex - 1)}

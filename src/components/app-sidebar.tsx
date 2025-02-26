@@ -1,4 +1,13 @@
-import { Calendar, Home, Inbox, Search, Calendar1Icon, LogOutIcon, BotMessageSquareIcon } from "lucide-react";
+import {
+  Calendar,
+  Home,
+  Inbox,
+  Search,
+  Calendar1Icon,
+  LogOutIcon,
+  BotMessageSquareIcon,
+  User2Icon,
+} from "lucide-react";
 
 import {
   Sidebar,
@@ -17,7 +26,7 @@ import {
 const items = [
   {
     title: "Home",
-    url: "#",
+    url: "/mentor/dashboard",
     icon: Home,
   },
   {
@@ -34,9 +43,14 @@ const items = [
 
 const profileItems = [
   {
-    title: "Update Availability",
+    title: "Availability",
     url: "#",
     icon: Calendar,
+  },
+  {
+    title: "Profile",
+    url: "/mentor/profile",
+    icon: User2Icon,
   },
   {
     title: "Billings",
