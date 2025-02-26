@@ -15,7 +15,6 @@ function FieldMapper({
   fieldName,
   field,
   formArray,
-  setFormArray,
   register,
 }: {
   fieldName: string;
