@@ -1,25 +1,26 @@
 import React, { Dispatch, SetStateAction } from "react";
 import { Button } from "@/components/ui/button";
+import { RoleEnum } from "@/constants/enum/role";
 
 function RoleChecker({
   userType,
   setUserType,
 }: {
-  userType: "STUDENT" | "MENTOR" | "PARENT";
-  setUserType: Dispatch<SetStateAction<string>>;
+  userType: RoleEnum;
+  setUserType: Dispatch<SetStateAction<RoleEnum>>;
 }) {
   return (
     <div className="flex flex-col gap-3">
-      {["STUDENT", "MENTOR", "PARENT"].map((role) => (
+      {Object.values(RoleEnum).filter(
+        role => role !== RoleEnum.ADMIN
+      ).map((role) => (
         <Button
           key={role}
-          variant={userType === role ? "default" : "outline"}
-          onClick={() => setUserType(role as "STUDENT" | "MENTOR" | "PARENT")}
+          variant={userType === role ? "secondary" : "outline"}
+          onClick={() => setUserType(role as RoleEnum)}
           className="w-full"
         >
-          {
-            role[0] + role.slice(1).toLowerCase()
-          }
+          {role[0] + role.slice(1).toLowerCase()}
         </Button>
       ))}
     </div>

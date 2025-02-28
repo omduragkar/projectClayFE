@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+"use client";
+import React, { ReactNode, useState } from "react";
 import FieldMapper from "@/components/common/FieldMapper";
 import { Button } from "@/components/ui/button";
 
@@ -37,3 +38,18 @@ function FieldForm({
 }
 
 export default FieldForm;
+
+interface AuthButtonProps {
+  children: ReactNode;
+}
+
+export const AuthButton: React.FC<AuthButtonProps> = ({ children }) => {
+  return (
+    <Button
+      variant={"outline"}
+      onClick={() => (window.location.href = "/auth")}
+    >
+      {children}
+    </Button>
+  );
+};

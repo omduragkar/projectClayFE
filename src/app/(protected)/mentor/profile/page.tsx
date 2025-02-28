@@ -1,7 +1,8 @@
+import MentorSignUpForm from "@/components/auth/MentorSignUpForm";
 import React from "react";
 
-function page() {
-  return <div>page</div>;
+function ProfilePage() {
+  return <MentorSignUpForm />;
 }
 
-export default page;
+export default ProfilePage;

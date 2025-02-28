@@ -22,112 +22,185 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 
-// Menu items.
-const items = [
-  {
-    title: "Home",
-    url: "/mentor/dashboard",
-    icon: Home,
-  },
-  {
-    title: "Upcoming Sessions",
-    url: "#",
-    icon: Calendar1Icon,
-  },
-  {
-    title: "Past Sessions",
-    url: "#",
-    icon: Search,
-  },
-];
+type Tab = {
+  title: string;
+  url: string;
+  icon: React.ComponentType;
+  disabled: boolean;
+  hidden: boolean;
+  onClick?: () => void;
+};
 
-const profileItems = [
-  {
-    title: "Availability",
-    url: "#",
-    icon: Calendar,
-  },
-  {
-    title: "Profile",
-    url: "/mentor/profile",
-    icon: User2Icon,
-  },
-  {
-    title: "Billings",
-    url: "#",
-    icon: Inbox,
-  },
-];
+type ISidebarMenuItem = {
+  title: string;
+  icon: React.ComponentType;
+  disabled: boolean;
+  hidden: boolean;
+  category: string;
+  tabs: Tab[];
+};
 
-const footerItems = [
-  {
-    title: "Help",
-    url: "#",
-    icon: BotMessageSquareIcon,
-  },
-  {
-    title: "Logout",
-    url: "#",
-    icon: LogOutIcon,
-  },
-];
+export function AppSidebar({ isOnboarded }: { isOnboarded: boolean }) {
+  const sidebarMenuItem: {
+    studentCategory: ISidebarMenuItem;
+    mentorCategory: ISidebarMenuItem;
+    footerCategory: ISidebarMenuItem;
+  } = {
+    studentCategory: {
+      title: "Student",
+      icon: Home,
+      disabled: !isOnboarded,
+      hidden: !isOnboarded,
+      category: "content",
+      tabs: [
+        {
+          title: "Home",
+          url: "/mentor/dashboard",
+          icon: Home,
+          disabled: !isOnboarded,
+          hidden: !isOnboarded,
+        },
+        {
+          title: "Upcoming Sessions",
+          url: "#",
+          icon: Calendar1Icon,
+          disabled: !isOnboarded,
+          hidden: !isOnboarded,
+        },
+        {
+          title: "Past Sessions",
+          url: "#",
+          icon: Search,
+          disabled: !isOnboarded,
+          hidden: !isOnboarded,
+        },
+      ],
+    },
+    mentorCategory: {
+      title: "Mentor",
+      icon: Home,
+      disabled: false,
+      hidden: false,
+      category: "content",
+      tabs: [
+        {
+          title: "Onboarding",
+          url: "/mentor/profile",
+          icon: Home,
+          disabled: isOnboarded,
+          hidden: isOnboarded,
+        },
+        {
+          title: "Availability",
+          url: "#",
+          icon: Calendar,
+          disabled: !isOnboarded,
+          hidden: !isOnboarded,
+        },
+        {
+          title: "Profile",
+          url: "/mentor/profile",
+          icon: User2Icon,
+          disabled: !isOnboarded,
+          hidden: !isOnboarded,
+        },
+        {
+          title: "Billings",
+          url: "#",
+          icon: Inbox,
+          disabled: !isOnboarded,
+          hidden: !isOnboarded,
+        },
+      ],
+    },
+    footerCategory: {
+      title: "Your Profile",
+      icon: Home,
+      disabled: false,
+      hidden: false,
+      category: "footer",
+      tabs: [
+        {
+          title: "Help",
+          url: "/help",
+          icon: BotMessageSquareIcon,
+          disabled: false,
+          hidden: false,
+        },
+        {
+          title: "Logout",
+          url: "#",
+          onClick: () => {
+            localStorage.clear();
+            window.location.href = "/auth";
+          },
+          icon: LogOutIcon,
+          disabled: false,
+          hidden: false,
+        },
+      ],
+    },
+  };
 
-export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader>
         <h1 className="text-2xl font-semibold">Project Clay</h1>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Student</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-        <SidebarGroup>
-          <SidebarGroupLabel>Your Profile</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {profileItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {Object.values(sidebarMenuItem).map((sidebarItem) => {
+          const tabs = sidebarItem.tabs.filter((tab) => !tab.hidden);
+          if (tabs.length === 0)
+            return <SidebarGroup key={sidebarItem.title} />;
+          if (sidebarItem?.category === "content") {
+            return (
+              <SidebarGroup key={sidebarItem.title}>
+                <SidebarGroupLabel>{sidebarItem.title}</SidebarGroupLabel>
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    {tabs.map((tab) => (
+                      <SidebarMenuItem key={tab.title}>
+                        <SidebarMenuButton asChild>
+                          <a href={tab.url}>
+                            <tab.icon />
+                            <span>{tab.title}</span>
+                          </a>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    ))}
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </SidebarGroup>
+            );
+          }
+          return (
+            <SidebarFooter key={sidebarItem.title}>
+              <SidebarMenu>
+                {tabs.map((tab) => (
+                  <SidebarMenuItem key={tab.title}>
+                    <SidebarMenuButton asChild>
+                      <a
+                        href={tab.url}
+                        onClick={(e) => {
+                          if (tab.disabled) {
+                            e.preventDefault();
+                          }
+                          if (tab.onClick) {
+                            tab.onClick();
+                          }
+                        }}
+                      >
+                        <tab.icon />
+                        <span>{tab.title}</span>
+                      </a>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarFooter>
+          );
+        })}
       </SidebarContent>
-      <SidebarFooter>
-        <SidebarMenu>
-          {footerItems.map((item) => (
-            <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild>
-                <a href={item.url}>
-                  <item.icon />
-                  <span>{item.title}</span>
-                </a>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
-        </SidebarMenu>
-      </SidebarFooter>
     </Sidebar>
   );
 }

@@ -1,14 +1,16 @@
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { AuthButton } from "@/components/common/FieldForm";
 
 export default function Home() {
   return (
-    <div className="container items-center justify-center flex h-screen">
-      <Link href="/auth">
-        <Button>
-          <p className="text-2xl font-semibold p-3 ">Go to Auth</p>
-        </Button>
-      </Link>
+    <div className="container items-center justify-center flex h-screen mx-auto">
+      <div className="text-center">
+        <h1 className="text-4xl font-bold">ProjectClay</h1>
+        <div className="mt-4">
+          <AuthButton>
+            Get Started
+          </AuthButton>
+        </div>
+      </div>
     </div>
   );
 }

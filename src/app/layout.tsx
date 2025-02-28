@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import Script from "next/script";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,7 +30,16 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
+        <Toaster />
       </body>
+      <head>
+        <Script
+          id="otpless-sdk"
+          strategy="afterInteractive"
+          src="https://otpless.com/v4/auth.js"
+          data-appid="VIGSX9QBLGAGZRFYB5BH"
+        ></Script>
+      </head>
     </html>
   );
 }
