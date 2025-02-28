@@ -28,6 +28,7 @@ interface OtplessButtonProps {
   setTestData: (data: any) => void;
 }
 import { RoleEnum } from "@/constants/enum/role";
+import { initOTPless } from "@/utils/initOtpless";
 
 const OtplessButton: React.FC<OtplessButtonProps> = ({
   signupCallback,
@@ -37,25 +38,27 @@ const OtplessButton: React.FC<OtplessButtonProps> = ({
   testData,
   setTestData,
 }) => {
+  function otplessCallback(otplessUser: OtplessUser) {
+    setLoading(true);
+    const userInfo: UserInfo = getEmailPhoneNumber(otplessUser);
+    signupCallback(
+      {
+        email: userInfo.email,
+        mobileNumber: userInfo.mobileNumber,
+        role: userType as RoleEnum,
+      },
+      otplessUser
+    );
+  }
   useEffect(() => {
-    (window as any).otpless = (otplessUser: OtplessUser) => {
-      setLoading(true);
-      const userInfo: UserInfo = getEmailPhoneNumber(otplessUser);
-      signupCallback(
-        {
-          email: userInfo.email,
-          mobileNumber: userInfo.mobileNumber,
-          role: userType as RoleEnum,
-        },
-        otplessUser
-      );
-    };
+    (window as any).otpless = otplessCallback;
+    initOTPless(otplessCallback);
   }, []);
   console.log({ searchProjectClay });
 
   return (
-    <Dialog defaultOpen={false} modal>
-      <div id="otpless" data-type="SIDE_CURTAIN">
+    <div id="otpless" data-type="SIDE_CURTAIN">
+      <Dialog defaultOpen={false} modal>
         {searchProjectClay ? (
           <></>
         ) : (
@@ -64,33 +67,33 @@ const OtplessButton: React.FC<OtplessButtonProps> = ({
             <ArrowRight size={20} />
           </Button>
         )}
-      </div>
-      <DialogContent>
-        <DialogHeader>
-          <DrawerTitle></DrawerTitle>
-        </DialogHeader>
-        {!!searchProjectClay ? (
-          <DrawerAuthTestContent
-            setTestData={setTestData}
-            signupCallback={signupCallback}
-            testData={testData}
-            userType={userType}
-          />
-        ) : (
-          <></>
+        <DialogContent>
+          <DialogHeader>
+            <DrawerTitle></DrawerTitle>
+          </DialogHeader>
+          {!!searchProjectClay ? (
+            <DrawerAuthTestContent
+              setTestData={setTestData}
+              signupCallback={signupCallback}
+              testData={testData}
+              userType={userType}
+            />
+          ) : (
+            <></>
+          )}
+        </DialogContent>
+        {searchProjectClay && (
+          <DialogTrigger
+            className="flex justify-between w-full"
+            onClick={() => {
+              document.getElementById("otplessBtn")?.click();
+            }}
+          >
+            Continue
+          </DialogTrigger>
         )}
-      </DialogContent>
-      {searchProjectClay && (
-        <DialogTrigger
-          className="flex justify-between w-full"
-          onClick={() => {
-            document.getElementById("otplessBtn")?.click();
-          }}
-        >
-          Continue
-        </DialogTrigger>
-      )}
-    </Dialog>
+      </Dialog>
+    </div>
   );
 };
 
