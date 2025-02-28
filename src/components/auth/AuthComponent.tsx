@@ -1,6 +1,6 @@
 "use client";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { RoleEnum } from "@/constants/enum/role";
 import { ArrowRight, Loader } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -23,6 +23,7 @@ import { Input } from "@/components/ui/input";
 import userStore, { IUserStore } from "@/store/user";
 import { signup } from "@/app/auth/action";
 import { getEmailPhoneNumber } from "@/constants";
+import OtplessButton from "../common/OtplessButton";
 
 export default function AuthBasedComponent() {
   const [loading, setLoading] = useState(false);
@@ -41,44 +42,44 @@ export default function AuthBasedComponent() {
   });
 
   const user = userStore((state: IUserStore) => state);
-  const signupCallback = async (
-    userInfo: {
-      email: string;
-      mobileNumber?: string;
-      role: RoleEnum;
-    },
-    otplessUser: any
-  ) => {
-    try {
-      const userInfoMap = Object.assign(userInfo, otplessUser);
-      console.log({ userInfoMap, otplessUser, userInfo });
-      const res = await signup(userInfoMap);
-      console.log({ res });
-      if (res?.error) {
-        throw new Error(res.error);
-      }
-      if (res?.success) {
-        //redirect to dashboard
-
-        console.log("redirect to dashboard");
-        user?.setUserInfo(res.data);
-        user?.setSessionInfo(otplessUser.sessionInfo);
-        user.setRole(res.data?.role);
-        if (user?.role == RoleEnum.MENTOR) {
-          link.push("/mentor/dashboard");
-        } else {
-          link.push("/dashboard");
+  const signupCallback = useCallback(
+    async (
+      userInfo: {
+        email: string;
+        mobileNumber?: string;
+        role: RoleEnum;
+      },
+      otplessUser: { sessionInfo: string }
+    ) => {
+      try {
+        const userInfoMap = Object.assign(userInfo, otplessUser);
+        console.log({ userInfoMap, otplessUser, userInfo });
+        const res = await signup(userInfoMap);
+        console.log({ res });
+        if (res?.error) {
+          throw new Error(res.error);
         }
+        if (res?.success) {
+          //redirect to dashboard
+
+          console.log("redirect to dashboard");
+          user?.setUserInfo(res.data);
+          user?.setSessionInfo(otplessUser.sessionInfo);
+          user.setRole(res.data?.role);
+          if (user?.role == RoleEnum.MENTOR) {
+            link.push("/mentor/dashboard");
+          } else {
+            link.push("/dashboard");
+          }
+        }
+      } catch (error) {
+        toast((error as Error)?.message || "Something went wrong");
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.log(error);
-      toast(error?.message, {
-        action: "Dismiss",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+    [link, user]
+  );
 
   useEffect(() => {
     if (
@@ -99,21 +100,6 @@ export default function AuthBasedComponent() {
     }
   }, [user?.userInfo, user?.sessionInfo]);
 
-  useEffect(() => {
-    window.otpless = (otplessUser) => {
-      setLoading(true);
-      const userInfo = getEmailPhoneNumber(otplessUser);
-      signupCallback(
-        {
-          email: userInfo.email,
-          mobileNumber: userInfo.mobileNumber,
-          role: userType,
-        },
-        otplessUser
-      );
-    };
-  }, []);
-
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -127,8 +113,13 @@ export default function AuthBasedComponent() {
       <div className="flex items-center justify-center min-h-screen bg-gray-100">
         <div className="flex items-center justify-center min-h-screen bg-gray-100">
           <Card className="p-6 shadow-lg bg-white min-w-[300px] overflow-y-auto">
-            <h1 className="text-2xl font-bold text-center py-5">Project Clay</h1>
-            <Tabs defaultValue="login" className="flex flex-col gap-4 items-center justify-center">
+            <h1 className="text-2xl font-bold text-center py-5">
+              Project Clay
+            </h1>
+            <Tabs
+              defaultValue="login"
+              className="flex flex-col gap-4 items-center justify-center"
+            >
               <TabsList>
                 <TabsTrigger value="login">Login</TabsTrigger>
                 <TabsTrigger value="signUp">Sign Up</TabsTrigger>
@@ -168,12 +159,11 @@ export default function AuthBasedComponent() {
                     </Button>
                   </DrawerTrigger>
                 ) : (
-                  <div id="otpless" data-type="SIDE_CURTAIN">
-                    <Button className="flex-1 justify-between w-full">
-                      <p className="text-md font-bold">Continue</p>
-                      <ArrowRight size={20} />
-                    </Button>
-                  </div>
+                  <OtplessButton
+                    setLoading={setLoading}
+                    userType={userType}
+                    signupCallback={signupCallback}
+                  />
                 )}
               </div>
             </Tabs>
