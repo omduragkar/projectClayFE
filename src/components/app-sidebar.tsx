@@ -1,8 +1,8 @@
+"use client";
 import {
   Calendar,
   Home,
   Inbox,
-  Search,
   Calendar1Icon,
   LogOutIcon,
   BotMessageSquareIcon,
@@ -20,7 +20,10 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarSeparator,
 } from "@/components/ui/sidebar";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 type Tab = {
   title: string;
@@ -41,6 +44,7 @@ type ISidebarMenuItem = {
 };
 
 export function AppSidebar({ isOnboarded }: { isOnboarded: boolean }) {
+  const path = usePathname();
   const sidebarMenuItem: {
     studentCategory: ISidebarMenuItem;
     mentorCategory: ISidebarMenuItem;
@@ -61,16 +65,9 @@ export function AppSidebar({ isOnboarded }: { isOnboarded: boolean }) {
           hidden: !isOnboarded,
         },
         {
-          title: "Upcoming Sessions",
-          url: "#",
+          title: "Sessions",
+          url: "/mentor/sessions",
           icon: Calendar1Icon,
-          disabled: !isOnboarded,
-          hidden: !isOnboarded,
-        },
-        {
-          title: "Past Sessions",
-          url: "#",
-          icon: Search,
           disabled: !isOnboarded,
           hidden: !isOnboarded,
         },
@@ -84,15 +81,15 @@ export function AppSidebar({ isOnboarded }: { isOnboarded: boolean }) {
       category: "content",
       tabs: [
         {
-          title: "Onboarding",
+          title: "Profile",
           url: "/mentor/profile",
-          icon: Home,
+          icon: User2Icon,
           disabled: isOnboarded,
           hidden: isOnboarded,
         },
         {
           title: "Availability",
-          url: "#",
+          url: "/mentor/availability",
           icon: Calendar,
           disabled: !isOnboarded,
           hidden: !isOnboarded,
@@ -106,7 +103,7 @@ export function AppSidebar({ isOnboarded }: { isOnboarded: boolean }) {
         },
         {
           title: "Billings",
-          url: "#",
+          url: "/mentor/billable",
           icon: Inbox,
           disabled: !isOnboarded,
           hidden: !isOnboarded,
@@ -143,9 +140,9 @@ export function AppSidebar({ isOnboarded }: { isOnboarded: boolean }) {
   };
 
   return (
-    <Sidebar>
+    <Sidebar key={path}>
       <SidebarHeader>
-        <h1 className="text-2xl font-semibold">Project Clay</h1>
+        <h1 className="text-2xl font-semibold px-2">Project Clay</h1>
       </SidebarHeader>
       <SidebarContent>
         {Object.values(sidebarMenuItem).map((sidebarItem) => {
@@ -155,16 +152,22 @@ export function AppSidebar({ isOnboarded }: { isOnboarded: boolean }) {
           if (sidebarItem?.category === "content") {
             return (
               <SidebarGroup key={sidebarItem.title}>
+                 <SidebarSeparator />
                 <SidebarGroupLabel>{sidebarItem.title}</SidebarGroupLabel>
                 <SidebarGroupContent>
                   <SidebarMenu>
                     {tabs.map((tab) => (
-                      <SidebarMenuItem key={tab.title}>
+                      <SidebarMenuItem
+                        key={tab.title}
+                        className={`${
+                          path === tab.url ? "bg-gray-200 rounded-md" : ""
+                        } :hover:bg-gray-100`}
+                      >
                         <SidebarMenuButton asChild>
-                          <a href={tab.url}>
+                          <Link href={tab.url}>
                             <tab.icon />
                             <span>{tab.title}</span>
-                          </a>
+                          </Link>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                     ))}
@@ -174,30 +177,35 @@ export function AppSidebar({ isOnboarded }: { isOnboarded: boolean }) {
             );
           }
           return (
-            <SidebarFooter key={sidebarItem.title}>
-              <SidebarMenu>
-                {tabs.map((tab) => (
-                  <SidebarMenuItem key={tab.title}>
-                    <SidebarMenuButton asChild>
-                      <a
-                        href={tab.url}
-                        onClick={(e) => {
-                          if (tab.disabled) {
-                            e.preventDefault();
-                          }
-                          if (tab.onClick) {
-                            tab.onClick();
-                          }
-                        }}
-                      >
-                        <tab.icon />
-                        <span>{tab.title}</span>
-                      </a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarFooter>
+            <div key={sidebarItem.title}>
+              <div className="flex-1" />
+              <SidebarSeparator />
+              <SidebarFooter key={sidebarItem.title}>
+                <SidebarGroupLabel>{sidebarItem.title}</SidebarGroupLabel>
+                <SidebarMenu>
+                  {tabs.map((tab) => (
+                    <SidebarMenuItem key={tab.title}>
+                      <SidebarMenuButton asChild>
+                        <Link
+                          href={tab.url}
+                          onClick={(e) => {
+                            if (tab.disabled) {
+                              e.preventDefault();
+                            }
+                            if (tab.onClick) {
+                              tab.onClick();
+                            }
+                          }}
+                        >
+                          <tab.icon />
+                          <span>{tab.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarFooter>
+            </div>
           );
         })}
       </SidebarContent>

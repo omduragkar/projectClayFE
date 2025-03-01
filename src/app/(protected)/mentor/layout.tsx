@@ -22,9 +22,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       if (user?.role !== RoleEnum.MENTOR) {
         redirect("/dashboard");
       } else {
-        if (!user?.isOnboarded) {
-          link.push("/mentor/profile");
-        }
+        // if (!user?.isOnboarded) {
+        //   link.push("/mentor/profile");
+        // }
       }
     } else {
       redirect("/auth");
@@ -35,11 +35,15 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <div className="flex h-screen overflow-hidden bg-gray-100 w-screen">
       <SidebarProvider>
         <div className="hidden md:flex md:flex-shrink-0">
-          <AppSidebar isOnboarded={user?.userInfo?.isOnboarded ?? false} />
+          {/* <AppSidebar isOnboarded={user?.userInfo?.isOnboarded ?? false} /> */}
+          <AppSidebar isOnboarded={true} />
         </div>
         <div className="flex flex-col w-0 flex-1 overflow-hidden">
-          <header className="bg-white shadow">
-            <SidebarTrigger />
+          <header className="bg-white shadow p-4">
+            <div className="flex items-center justify-start gap-2">
+              <SidebarTrigger size={"icon"} />
+              <p className="text-lg font-semibold">Welcome {user?.userInfo?.name || "Mentor"}</p>
+            </div>
           </header>
           <main
             className="flex-1 overflow-y-auto focus:outline-none"

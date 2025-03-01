@@ -1,8 +1,10 @@
 import { type NextRequest } from 'next/server'
 import { updateSession } from '@/constants/utils/supabase/middleware'
+// import { getSessionDetails } from './app/auth/action'
 
 export async function middleware(request: NextRequest) {
   // update user's auth session
+  console.log('middleware', request);
   return await updateSession(request)
 }
 
